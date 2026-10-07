@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IMRAN DIGITAL – CSC Centre</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+background:#0b1030;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-1;background:linear-gradient(135deg,#1b1464 0%,#0b1030 45%,#02323f 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.75;animation:float 18s ease-in-out infinite}
+.b1{width:420px;height:420px;background:#7c3aed;top:-80px;left:-80px}
+.b2{width:380px;height:380px;background:#06b6d4;bottom:-60px;right:-60px;animation-delay:-6s}
+.b3{width:300px;height:300px;background:#ec4899;top:40%;left:45%;animation-delay:-12s;opacity:.5}
+@keyframes float{50%{transform:translate(50px,-40px) scale(1.12)}}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.05));
+backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);
+border:1px solid rgba(255,255,255,.22);border-radius:28px;
+box-shadow:0 10px 40px rgba(0,0,0,.35),inset 0 1px 1px rgba(255,255,255,.45),inset 0 -1px 1px rgba(255,255,255,.08)}
+.glass-sm{border-radius:16px}
+.card{transition:transform .3s,box-shadow .3s;cursor:pointer}
+.card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 18px 50px rgba(124,58,237,.45),inset 0 1px 1px rgba(255,255,255,.5)}
+.inp{width:100%;padding:.7rem 1rem;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;outline:none;backdrop-filter:blur(10px)}
+.inp::placeholder{color:rgba(255,255,255,.5)}
+.inp:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,.35)}
+.btn{padding:.65rem 1.2rem;border-radius:14px;font-weight:600;background:linear-gradient(135deg,#8b5cf6,#06b6d4);box-shadow:0 6px 20px rgba(139,92,246,.45),inset 0 1px 1px rgba(255,255,255,.4);transition:.2s;display:inline-flex;gap:.4rem;align-items:center;justify-content:center}
+.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.14);box-shadow:inset 0 1px 1px rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.2)}
+.btn-r{background:linear-gradient(135deg,#f43f5e,#fb923c)}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:1rem;overflow:auto}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:.8rem;color:rgba(255,255,255,.7)}
+td{padding:.75rem .8rem;border-top:1px solid rgba(255,255,255,.12);font-size:.9rem}
+tr.row:hover{background:rgba(255,255,255,.07)}
+.sw{width:46px;height:26px;border-radius:99px;background:rgba(255,255,255,.2);position:relative;transition:.25s;border:1px solid rgba(255,255,255,.3)}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.sw.on{background:linear-gradient(135deg,#10b981,#06b6d4)}.sw.on::after{left:22px}
+label.l{font-size:.8rem;color:rgba(255,255,255,.75);margin:0 0 .25rem .25rem;display:block}
+.card{position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;background:radial-gradient(220px circle at var(--x,50%) var(--y,50%),rgba(255,255,255,.3),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover::before{opacity:1}
+.ticker{overflow:hidden;white-space:nowrap;flex:1;min-width:0}
+.ticker span{display:inline-block;padding-left:100%;animation:tick 30s linear infinite}
+@keyframes tick{to{transform:translateX(-100%)}}
+.dot{width:10px;height:10px;border-radius:50%;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 currentColor}100%{box-shadow:0 0 0 10px transparent}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div id="app" class="max-w-7xl mx-auto px-3 sm:px-6 py-4"></div>
+<div id="modal"></div>
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60]"></div>
+
+<script>
+/* ===== CONFIG – change contact details here ===== */
+const CFG={hours:[9,19],notice:'Welcome to IMRAN DIGITAL – PAN, Voter Card, PM Kisan, Aadhaar & more services available. Please bring original documents.',name:'IMRAN DIGITAL',addr:'Patharghatiya, PO-Dubrajpur, PS-Palojori',phone:'+91 91533 47558',email:'cscpatharghatia@gmail.com',
+admin:{email:'cscpatharghatia@gmail.com',pass:'Imran@9955'}};
+const DOCS={'New PAN Apply':['Photo','Aadhaar Card','Birth Proof','Signature'],'Voter Card Apply':['Photo','Aadhaar Card','Age Proof','Address Proof'],
+'PM Kisan Apply':['Aadhaar Card','Bank Passbook','Land Record (Parcha)','Photo'],'Aadhaar Update':['Existing Aadhaar Card','Supporting Proof'],
+'Ayushman Card':['Aadhaar Card','Ration Card'],'Income / Caste Certificate':['Aadhaar Card','Ration Card','Photo','Self Declaration'],
+'Bank / AePS Services':['Aadhaar Card','Bank Passbook'],'Other CSC Services':['Document 1','Document 2','Document 3']};
+const SERVICES=[
+['New PAN Apply','credit-card','from-violet-500/40','Aadhaar card, mobile linked to Aadhaar, passport photo, signature'],
+['Voter Card Apply','vote','from-cyan-500/40','Passport photo, age proof, address proof, Aadhaar'],
+['PM Kisan Apply','sprout','from-emerald-500/40','Aadhaar, bank passbook, land record (Parcha / Khatiyan), mobile number'],
+['Aadhaar Update','fingerprint','from-pink-500/40','Existing Aadhaar, supporting ID / address proof, linked mobile'],
+['Ayushman Card','heart-pulse','from-rose-500/40','Aadhaar, ration card, mobile number'],
+['Income / Caste Certificate','file-badge','from-amber-500/40','Aadhaar, ration card, self declaration, photo'],
+['Bank / AePS Services','landmark','from-sky-500/40','Aadhaar number & bank-linked biometric'],
+['Other CSC Services','layers','from-fuchsia-500/40','Bill pay, ticketing, insurance, e-District & more']];
+
+/* ===== Data layer: shared db when available, otherwise this browser's localStorage ===== */
+const S={user:null,records:[],ops:[],views:[],files:[],apps:[],opTab:'entry',folder:null,notice:'',q:'',tab:'records',mode:'local'};
+let DB=null;const subs={};
+async function initStore(){
+  try{if(window.claude&&claude.use){DB=await Promise.race([claude.use('db'),new Promise(r=>setTimeout(()=>r(null),3000))]);}}catch(e){DB=null}
+  S.mode=DB?'shared':'local';
+  ['records','operators','views','files','settings','apps'].forEach(c=>sub(c,rows=>{if(c==='records')S.records=rows.sort((a,b)=>a.slno-b.slno);else if(c==='views')S.views=rows.sort((a,b)=>b.last-a.last);else if(c==='apps')S.apps=rows.sort((a,b)=>b.at-a.at);else if(c==='settings')S.notice=(rows.find(x=>x.id==='notice')||{}).text||'';else if(c==='files')S.files=rows.sort((a,b)=>b.at-a.at);else S.ops=rows;render()}));
+}
+const lk=c=>'imd_'+c;
+const lread=c=>{try{return JSON.parse(localStorage.getItem(lk(c))||'{}')}catch(e){return{}}};
+function sub(c,cb){
+  if(DB){DB.collection(c).onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),()=>{});}
+  else{const f=()=>cb(Object.entries(lread(c)).map(([id,v])=>({id,...v})));f();addEventListener('storage',f);subs[c]=f;}
+}
+async function put(c,id,o){
+  if(DB)return DB.collection(c).doc(id).set(o);
+  try{const m=lread(c);m[id]=o;localStorage.setItem(lk(c),JSON.stringify(m));}catch(e){toast('Storage full – try a smaller PDF')}
+  subs[c]&&subs[c]();
+}
+async function del(c,id){
+  if(DB)return DB.collection(c).doc(id).delete();
+  try{const m=lread(c);delete m[id];localStorage.setItem(lk(c),JSON.stringify(m));}catch(e){}
+  subs[c]&&subs[c]();
+}
+
+/* ===== helpers ===== */
+const $=s=>document.querySelector(s);
+const icons=()=>{try{window.lucide&&lucide.createIcons()}catch(e){}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic=(n,c='w-5 h-5')=>`<i data-lucide="${n}" class="${c}"></i>`;
+const fmtA=v=>String(v).replace(/\D/g,'').slice(0,12).replace(/(\d{4})(?=\d)/g,'$1 ');
+const mask=(v,k=4)=>v?'•'.repeat(Math.max(0,String(v).replace(/\s/g,'').length-k))+String(v).replace(/\s/g,'').slice(-k):'—';
+function toast(m){const t=$('#toast');t.innerHTML=`<div class="glass glass-sm px-5 py-3 text-sm">${esc(m)}</div>`;setTimeout(()=>t.innerHTML='',2800)}
+function modal(h){$('#modal').innerHTML=h?`<div class="modal" data-act="bd"><div class="glass p-6 w-full max-w-lg">${h}</div></div>`:'';icons()}
+
+/* ===== views ===== */
+function header(){
+  const u=S.user;
+  return `<header class="glass p-4 sm:p-5 flex flex-wrap items-center gap-4 justify-between">
+   <div class="flex items-center gap-3">
+    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-cyan-400 grid place-items-center shadow-lg">${ic('shield-check','w-7 h-7')}</div>
+    <div><h1 class="text-xl sm:text-2xl font-extrabold tracking-wide">${CFG.name}</h1>
+    <p class="text-xs sm:text-sm text-white/70 flex items-center gap-1">${ic('map-pin','w-3.5 h-3.5')}${CFG.addr}</p>
+    <img src="data:image/jpeg;base64,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" alt="CSC Common Services Centre – IMRAN DIGITAL" class="mt-2 h-16 w-auto rounded-xl border border-white/30 shadow-lg"></div>
+   </div>
+   <div class="text-xs sm:text-sm text-white/80 space-y-1">
+    <div class="flex items-center gap-2">${ic('phone','w-4 h-4')}${ic('message-circle','w-4 h-4')}Admin (Call &amp; WhatsApp): <a class="underline" href="https://wa.me/919153347558" target="_blank" rel="noopener">${CFG.phone}</a></div>
+    <div class="flex items-center gap-2">${ic('mail','w-4 h-4')}${CFG.email}</div>
+   </div>
+   <div>${u?`<div class="flex items-center gap-3"><div class="text-right text-sm"><div class="font-semibold">${esc(u.name)}</div><div class="text-white/60 capitalize text-xs">${u.role} login</div></div><button class="btn btn-g" data-act="logout">${ic('log-out','w-4 h-4')}Logout</button></div>`
+   :`<button class="btn" data-act="loginmenu">${ic('log-in','w-4 h-4')}Login</button>`}</div>
+  </header>`;
+}
+function ist(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Kolkata'}))}
+function isOpen(d){const h=d.getHours()+d.getMinutes()/60;return h>=CFG.hours[0]&&h<CFG.hours[1]}
+function bar(){
+  const f=h=>(h%12||12)+(h<12?' AM':' PM');
+  return `<div class="glass glass-sm mt-4 px-4 py-2 flex items-center gap-4 text-sm" style="border-radius:18px">
+   <div class="flex items-center gap-2 shrink-0"><span id="dot" class="dot"></span><b id="st"></b><span class="text-white/60 hidden sm:inline" id="clk"></span><span class="text-white/50 hidden md:inline">· ${f(CFG.hours[0])} – ${f(CFG.hours[1])}</span></div>
+   <div class="border-l border-white/20 pl-4 flex items-center flex-1 min-w-0">${ic('megaphone','w-4 h-4 mr-2 shrink-0')}<div class="ticker"><span>${esc(S.notice||CFG.notice)}</span></div></div></div>`;
+}
+function tickClk(){
+  const st=$('#st');if(!st)return;const d=ist(),o=isOpen(d),c=o?'#34d399':'#fb7185';
+  st.textContent=o?'OPEN NOW':'CLOSED';st.style.color=c;$('#dot').style.cssText='color:'+c+';background:currentColor';
+  $('#clk').textContent=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(tickClk,1000);
+document.addEventListener('mousemove',e=>{const c=e.target.closest&&e.target.closest('.card');if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty('--x',(e.clientX-r.left)+'px');c.style.setProperty('--y',(e.clientY-r.top)+'px')});
+function hero(){
+  return `<section class="text-center py-10 sm:py-14">
+   <h2 class="text-3xl sm:text-5xl font-extrabold bg-gradient-to-r from-white via-violet-200 to-cyan-200 bg-clip-text text-transparent">PATHARGHATIYA PANCHAYAT</h2>
+   <p class="mt-3 text-white/70 max-w-xl mx-auto">PAN, Voter Card, PM Kisan, Aadhaar and more – fast, secure and trusted CSC services for our village.</p>
+   <button class="btn mt-6" data-act="loginmenu">${ic('log-in','w-4 h-4')}Login to Portal</button></section>`;
+}
+function services(){
+  return `<section class="mt-8"><h3 class="text-lg font-bold mb-4 flex items-center gap-2">${ic('sparkles')}Our Services</h3>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">${SERVICES.map((s,i)=>`
+   <div class="glass card p-5 bg-gradient-to-br ${s[2]} to-transparent" data-act="svc" data-i="${i}">
+    <div class="w-12 h-12 rounded-2xl glass glass-sm grid place-items-center mb-3">${ic(s[1],'w-6 h-6')}</div>
+    <div class="font-semibold leading-tight">${s[0]}</div>
+    <div class="text-xs text-white/60 mt-1 flex items-center gap-1">Details ${ic('arrow-right','w-3 h-3')}</div></div>`).join('')}</div></section>`;
+}
+function opForm(){
+  const mine=S.records.filter(r=>r.by===S.user.name).length;
+  const f=(id,l,ph,ex='')=>`<div><label class="l">${l}</label><input class="inp" id="${id}" placeholder="${ph}" ${ex}></div>`;
+  return `<section class="glass p-5 sm:p-7 mt-6"><div class="flex justify-between items-center mb-5 flex-wrap gap-2">
+   <h3 class="text-lg font-bold flex items-center gap-2">${ic('file-plus-2')}Data Entry Form</h3>
+   <span class="text-sm text-white/70">Entries by you: <b>${mine}</b></span></div>
+   <form id="entry" class="grid sm:grid-cols-2 gap-4">
+    ${f('f_name','Name','Full name')}${f('f_father','Father / Husband Name','Father or husband name')}
+    ${f('f_aadhaar','Aadhaar No','XXXX XXXX XXXX','inputmode="numeric" maxlength="14"')}${f('f_parcha','Parcha No','Parcha number')}
+    ${f('f_pan','PAN No','ABCDE1234F','maxlength="10" style="text-transform:uppercase"')}${f('f_acc','Account No','Bank account number','inputmode="numeric"')}
+    ${f('f_ifsc','IFSC Code','SBIN0001234','maxlength="11" style="text-transform:uppercase"')}
+    <div><label class="l">PDF Document (max ${MAXT()})</label><input class="inp" id="f_pdf" type="file" accept="application/pdf"></div>
+    <div class="sm:col-span-2 flex gap-3"><button class="btn">${ic('send','w-4 h-4')}Submit to Admin</button><button type="reset" class="btn btn-g">Clear</button></div>
+   </form></section>`;
+}
+function filtered(){
+  const q=S.q.toLowerCase().trim();if(!q)return S.records;
+  return S.records.filter(r=>[r.slno,r.name,r.father,r.aadhaar,r.parcha,r.pan,r.acc,r.ifsc,r.by].join(' ').toLowerCase().includes(q));
+}
+function adminPanel(){
+  const pub=S.records.filter(r=>r.pub).length;
+  const tabs=[['records','table-2','Records'],['operators','users','Operators'],['viewers','eye','Viewers'],['files','folder-up','Files'],['folders','folder','Service Folders']].map(t=>`<button class="btn ${S.tab===t[0]?'':'btn-g'}" data-act="tab" data-t="${t[0]}">${ic(t[1],'w-4 h-4')}${t[2]}</button>`).join('');
+  const stats=[['Total Records',S.records.length,'database'],['Published',pub,'globe'],['Operators',S.ops.length,'users'],['Public Viewers',S.views.length,'eye']].map(s=>`<div class="glass glass-sm p-4 flex items-center gap-3">${ic(s[2],'w-7 h-7')}<div><div class="text-2xl font-bold">${s[1]}</div><div class="text-xs text-white/60">${s[0]}</div></div></div>`).join('');
+  return `<section class="mt-6"><div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">${stats}</div>
+  <div class="glass glass-sm p-3 mb-4 flex flex-wrap gap-2 items-center"><span class="text-sm flex items-center gap-1">${ic('megaphone','w-4 h-4')}Notice board:</span>
+   <input id="notice_in" class="inp flex-1 min-w-[200px]" placeholder="Write a notice for the scrolling bar (leave empty for default)" value="${esc(S.notice)}">
+   <button class="btn" data-act="savenotice">Save</button></div>
+  <div class="glass p-4 sm:p-6"><div class="flex flex-wrap gap-2 justify-between mb-4">
+   <div class="flex gap-2">${tabs}</div>
+   <span class="text-xs text-white/60 self-center flex items-center gap-1">${ic('radio','w-3.5 h-3.5')}Live · ${S.mode==='shared'?'shared database':'this-browser storage'}</span></div>
+   ${S.tab==='records'?recordsTbl():S.tab==='folders'?foldersPanel():S.tab==='viewers'?viewersTbl():S.tab==='files'?filesAdmin():opsPanel()}</div></section>`;
+}
+function recordsTbl(){
+  const rows=filtered();
+  return `<div class="flex flex-wrap gap-2 mb-4">
+   <div class="relative flex-1 min-w-[220px]"><span class="absolute left-3 top-3 text-white/60">${ic('search','w-5 h-5')}</span>
+   <input id="q" class="inp" style="padding-left:2.6rem" placeholder="Advanced search: name, parcha, Aadhaar, PAN, account, IFSC, SL No…" value="${esc(S.q)}"></div>
+   <button class="btn btn-g" data-act="xls">${ic('file-spreadsheet','w-4 h-4')}Excel</button>
+   <button class="btn btn-g" data-act="pdfall">${ic('file-text','w-4 h-4')}PDF</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>SL</th><th>Name</th><th>Father/Husband</th><th>Parcha</th><th>PAN</th><th>Entered by</th><th>Public</th><th class="text-right">Actions</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr class="row"><td class="font-bold">${r.slno}</td><td>${esc(r.name)}</td><td>${esc(r.father)}</td><td>${esc(r.parcha)}</td><td>${esc(r.pan)}</td><td class="text-white/60">${esc(r.by)}</td>
+   <td><button class="sw ${r.pub?'on':''}" data-act="pub" data-id="${r.id}" title="Publish to village login"></button></td>
+   <td class="text-right whitespace-nowrap"><button class="btn btn-g !p-2" data-act="view" data-id="${r.id}" title="View">${ic('eye','w-4 h-4')}</button>
+   <button class="btn btn-g !p-2" data-act="edit" data-id="${r.id}" title="Edit">${ic('pencil','w-4 h-4')}</button>
+   <button class="btn btn-g !p-2" data-act="pdf1" data-id="${r.id}" title="Download PDF">${ic('download','w-4 h-4')}</button>
+   <button class="btn btn-r !p-2" data-act="delrec" data-id="${r.id}" title="Delete">${ic('trash-2','w-4 h-4')}</button></td></tr>`).join('')||`<tr><td colspan="8" class="text-center text-white/60 py-8">No records found</td></tr>`}
+  </tbody></table></div>`;
+}
+function viewersTbl(){
+  const d=t=>t?new Date(t).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}):'—';
+  return `<p class="text-sm text-white/70 mb-3">${S.views.length} villager(s) have logged in to the public portal · ${S.records.filter(r=>r.pub).length} record(s) published</p>
+  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Mobile</th><th>Visits</th><th>Last seen</th></tr></thead><tbody>
+  ${S.views.map((v,i)=>`<tr class="row"><td>${i+1}</td><td>${esc(v.name)}</td><td>${esc(v.mobile)}</td><td>${v.visits||1}</td><td class="text-white/70">${d(v.last)}</td></tr>`).join('')||'<tr><td colspan="5" class="text-center text-white/60 py-8">No one has viewed yet</td></tr>'}
+  </tbody></table></div>`;
+}
+function opsPanel(){
+  return `<form id="opf" class="grid sm:grid-cols-4 gap-3 mb-5">
+   <input class="inp" id="o_name" placeholder="Operator name" required><input class="inp" id="o_user" placeholder="Username" required>
+   <input class="inp" id="o_pass" placeholder="Password" required><button class="btn">${ic('user-plus','w-4 h-4')}Create Operator</button></form>
+  <div class="grid sm:grid-cols-2 gap-3">${S.ops.map(o=>`<div class="glass glass-sm p-4 flex justify-between items-center"><div><div class="font-semibold">${esc(o.name)}</div><div class="text-xs text-white/60">@${esc(o.id)} · ${S.records.filter(r=>r.by===o.name).length} entries</div></div>
+   <button class="btn btn-r !p-2" data-act="delop" data-id="${o.id}">${ic('trash-2','w-4 h-4')}</button></div>`).join('')||'<p class="text-white/60">No operators yet. Create one above – operators can only enter data.</p>'}</div>`;
+}
+const fico=t=>/image/.test(t)?'image':/pdf/.test(t)?'file-text':'file-spreadsheet';
+function opTabs(){
+  return `<div class="mt-6 flex gap-2 overflow-x-auto pb-1"><button class="btn ${S.opTab==='entry'?'':'btn-g'} shrink-0" data-act="optab" data-t="entry">${ic('file-plus-2','w-4 h-4')}Data Entry</button>
+  ${SERVICES.map((s,i)=>`<button class="btn ${S.opTab===i?'':'btn-g'} shrink-0" data-act="optab" data-t="${i}">${ic(s[1],'w-4 h-4')}${s[0]}</button>`).join('')}</div>`;
+}
+function opPanel(){return opTabs()+(S.opTab==='entry'?opForm():appForm())}
+function appForm(){
+  const i=S.opTab,s=SERVICES[i],docs=DOCS[s[0]]||['Document 1','Document 2'],n=S.apps.filter(a=>a.svc===s[0]&&a.by===S.user.name).length;
+  return `<section class="glass p-5 sm:p-7 mt-3"><div class="flex justify-between items-center flex-wrap gap-2 mb-5">
+   <h3 class="text-lg font-bold flex items-center gap-2">${ic(s[1])}${s[0]} – Documents</h3><span class="text-sm text-white/70">Sent by you: <b>${n}</b></span></div>
+  <form id="appf" data-svc="${i}" class="grid sm:grid-cols-2 gap-4">
+   <div><label class="l">Applicant Name</label><input class="inp" id="a_name" placeholder="Full name"></div>
+   <div><label class="l">Mobile No</label><input class="inp" id="a_mob" inputmode="numeric" maxlength="10" placeholder="10-digit mobile"></div>
+   ${docs.map((d,k)=>`<div><label class="l">${d} (photo / PDF, max ${MAXT()})</label><input class="inp" type="file" id="a_d${k}" accept=".pdf,image/*"></div>`).join('')}
+   <div class="sm:col-span-2"><label class="l">Note (optional)</label><input class="inp" id="a_note" placeholder="Any remark for admin"></div>
+   <div class="sm:col-span-2"><button class="btn">${ic('send','w-4 h-4')}Send to Admin – ${s[0]} Folder</button></div></form></section>`;
+}
+function foldersPanel(){
+  if(S.folder==null)return `<div class="grid grid-cols-2 md:grid-cols-4 gap-3">${SERVICES.map((s,i)=>`<div class="glass card p-5 text-center" data-act="folder" data-i="${i}">${ic('folder','w-10 h-10 mx-auto mb-2')}<div class="font-semibold text-sm">${s[0]}</div><div class="text-xs text-white/60 mt-1">${S.apps.filter(a=>a.svc===s[0]).length} application(s)</div></div>`).join('')}</div>`;
+  const s=SERVICES[S.folder],list=S.apps.filter(a=>a.svc===s[0]);
+  return `<div class="flex items-center gap-3 mb-4"><button class="btn btn-g" data-act="folder" data-i="">${ic('arrow-left','w-4 h-4')}Folders</button><h3 class="font-bold flex items-center gap-2">${ic('folder-open')}${s[0]} Folder</h3></div>
+  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Applicant</th><th>Mobile</th><th>Documents</th><th>By</th><th>Date</th><th></th></tr></thead><tbody>
+  ${list.map((a,i)=>`<tr class="row"><td>${list.length-i}</td><td>${esc(a.name)||'—'}${a.note?`<div class="text-xs text-white/50">${esc(a.note)}</div>`:''}</td><td>${esc(a.mob)||'—'}</td>
+   <td>${a.docs.map((d,k)=>`<button class="btn btn-g text-xs mr-1 mb-1" style="padding:.3rem .6rem" data-act="adoc" data-id="${a.id}" data-k="${k}">${ic(/image/.test(d.type)?'image':'file-text','w-3.5 h-3.5')}${esc(d.label)}</button>`).join('')||'—'}</td>
+   <td class="text-white/60">${esc(a.by)}</td><td class="text-white/60">${new Date(a.at).toLocaleDateString('en-IN')}</td>
+   <td><button class="btn btn-r !p-2" data-act="delapp" data-id="${a.id}">${ic('trash-2','w-4 h-4')}</button></td></tr>`).join('')||'<tr><td colspan="7" class="text-center text-white/60 py-8">No applications in this folder yet</td></tr>'}</tbody></table></div>`;
+}
+function filesAdmin(){
+  return `<form id="filef" class="grid sm:grid-cols-3 gap-3 mb-5"><input class="inp" id="u_title" placeholder="Title (optional)">
+   <input class="inp" id="u_file" type="file" accept=".pdf,.xls,.xlsx,.csv,image/*" required><button class="btn">${ic('upload','w-4 h-4')}Upload File</button></form>
+  <p class="text-xs text-white/60 mb-3">Any PDF, image or Excel/CSV. Files up to ${MAXT()} (images are auto-resized). Use the switch to show a file in the public village login.</p>
+  <div class="grid sm:grid-cols-2 gap-3">${S.files.map(f=>`<div class="glass glass-sm p-4 flex items-center gap-3">
+   ${/image/.test(f.type)?`<img src="${f.data}" class="w-14 h-14 rounded-xl object-cover">`:`<div class="w-14 h-14 rounded-xl glass glass-sm grid place-items-center">${ic(fico(f.type),'w-6 h-6')}</div>`}
+   <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(f.title||f.name)}</div><div class="text-xs text-white/60 truncate">${esc(f.name)}</div></div>
+   <button class="sw ${f.pub?'on':''}" data-act="fpub" data-id="${f.id}" title="Publish to public"></button>
+   <button class="btn btn-g !p-2" data-act="fdl" data-id="${f.id}">${ic('download','w-4 h-4')}</button>
+   <button class="btn btn-r !p-2" data-act="fdel" data-id="${f.id}">${ic('trash-2','w-4 h-4')}</button></div>`).join('')||'<p class="text-white/60">No files uploaded yet.</p>'}</div>`;
+}
+function publicFiles(){
+  const fs=S.files.filter(f=>f.pub);
+  return `<section class="glass p-5 sm:p-7 mt-6"><h3 class="text-lg font-bold mb-4 flex items-center gap-2">${ic('folder-open')}Shared Files</h3>
+  <div class="grid sm:grid-cols-2 gap-3">${fs.map(f=>`<div class="glass glass-sm p-4">${/image/.test(f.type)?`<img src="${f.data}" class="w-full max-h-64 object-contain rounded-xl mb-3">`:''}
+   <div class="flex items-center gap-3">${ic(fico(f.type),'w-6 h-6')}<div class="flex-1 min-w-0 font-semibold truncate">${esc(f.title||f.name)}</div>
+   <button class="btn btn-g !p-2" data-act="fdl" data-id="${f.id}">${ic('download','w-4 h-4')}</button></div></div>`).join('')||'<p class="text-white/60">No files shared yet.</p>'}</div></section>`;
+}
+function publicPanel(){return publicRecords()+publicFiles()}
+function publicRecords(){
+  const q=S.q.toLowerCase().trim();
+  const rows=S.records.filter(r=>r.pub&&(!q||[r.name,r.father,r.parcha].join(' ').toLowerCase().includes(q)));
+  return `<section class="glass p-5 sm:p-7 mt-6"><h3 class="text-lg font-bold mb-1 flex items-center gap-2">${ic('globe')}Village Records</h3>
+  <p class="text-sm text-white/60 mb-4">Records published by the admin. Sensitive numbers are masked for your privacy.</p>
+  <input id="q" class="inp mb-4" placeholder="Search by name or parcha no…" value="${esc(S.q)}">
+  <div class="grid sm:grid-cols-2 gap-3">${rows.map(r=>`<div class="glass glass-sm p-4"><div class="flex justify-between"><b>${esc(r.name)}</b><span class="text-xs px-2 py-1 rounded-full bg-emerald-400/25">Published</span></div>
+  <div class="text-sm text-white/70 mt-1">S/o or W/o ${esc(r.father)}</div>
+  <div class="grid grid-cols-2 gap-1 text-xs text-white/70 mt-3"><span>Parcha: ${esc(r.parcha)}</span><span>Aadhaar: ${mask(r.aadhaar)}</span><span>PAN: ${mask(r.pan,3)}</span><span>A/c: ${mask(r.acc)}</span></div></div>`).join('')||'<p class="text-white/60">No published records match.</p>'}</div></section>`;
+}
+function render(){
+  const act=document.activeElement;const keep=act&&act.id==='q'?act.selectionStart:null;
+  const u=S.user;
+  $('#app').innerHTML=header()+bar()+(u?(u.role==='admin'?adminPanel():u.role==='operator'?opPanel():publicPanel()):hero())+services()+
+  `<footer class="text-center text-xs text-white/50 py-8">© ${new Date().getFullYear()} ${CFG.name} · ${CFG.addr}</footer>`;
+  icons();tickClk();
+  if(keep!==null){const q=$('#q');if(q){q.focus();q.setSelectionRange(keep,keep)}}
+}
+
+/* ===== actions ===== */
+function loginForm(role){
+  const t={admin:['Admin Login','shield'],operator:['Operator Login','keyboard'],public:['Village / Public Login','home']}[role];
+  const fields=role==='public'?`<input class="inp" id="l_a" placeholder="Your name" required><input class="inp" id="l_b" placeholder="Mobile number" inputmode="numeric" maxlength="10" required>`
+  :`<input class="inp" id="l_a" placeholder="${role==='admin'?'Email':'Username'}" required><input class="inp" id="l_b" type="password" placeholder="Password" required>`;
+  modal(`<h3 class="text-xl font-bold mb-4 flex items-center gap-2">${ic(t[1])}${t[0]}</h3>
+  <form id="lf" data-role="${role}" class="space-y-3">${fields}<div class="flex gap-2"><button class="btn flex-1">Login</button><button type="button" class="btn btn-g" data-act="loginmenu">Back</button></div></form>`);
+}
+function download(name,data,type){
+  const blob=data instanceof Blob?data:new Blob([data],{type});
+  const fallback=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()};
+  try{claude.use('downloads').then(d=>d?d.save({filename:name,data:blob}).catch(fallback):fallback()).catch(fallback)}catch(e){fallback()}
+}
+const d2b=u=>{const [h,b]=u.split(',');const bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:h.slice(5,h.indexOf(';'))||'application/octet-stream'})};
+function dlData(name,u){const blob=d2b(u);download(name,blob,blob.type)}
+const rd=f=>new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(f)});
+async function prep(f){
+  if(!/^image\//.test(f.type))return f.size>MAXB()?null:rd(f);
+  const img=new Image();img.src=await rd(f);await new Promise(r=>img.onload=r);
+  for(const m of [1000,700,450]){const k=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=img.width*k;c.height=img.height*k;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);const u=c.toDataURL('image/jpeg',.8);if(u.length<200000)return u}
+  return null;
+}
+const MAXB=()=>DB?5*1024*1024:150*1024,MAXT=()=>DB?'5 MB':'150 KB',CH=150000;
+async function packData(u,force){
+  if(!DB||(!force&&u.length<=CH))return{data:u};
+  const cid='c'+Date.now()+Math.random().toString(36).slice(2,6),n=Math.ceil(u.length/CH);
+  for(let i=0;i<n;i+=6)await Promise.all([...Array(Math.min(6,n-i))].map((_,k)=>put('chunks',cid+'_'+(i+k),{d:u.slice((i+k)*CH,(i+k+1)*CH)})));
+  return{cid,n};
+}
+async function loadData(o){
+  if(o.data)return o.data;if(!o.cid)return '';
+  let out='';for(let i=0;i<o.n;i++){const x=await DB.collection('chunks').doc(o.cid+'_'+i).get();out+=x.data().d}
+  return out;
+}
+async function dropData(o){if(DB&&o&&o.cid)for(let i=0;i<o.n;i++)await del('chunks',o.cid+'_'+i).catch(()=>{})}
+const cols=[['SL No','slno'],['Name','name'],['Father/Husband','father'],['Aadhaar','aadhaar'],['Parcha No','parcha'],['PAN','pan'],['Account No','acc'],['IFSC','ifsc'],['Entered By','by'],['Published',r=>r.pub?'Yes':'No']];
+const val=(r,c)=>typeof c[1]==='function'?c[1](r):r[c[1]];
+function printPdf(rs,title){
+  const h=`<html><head><title>${title}</title><style>body{font-family:Arial;padding:20px}h2{margin:0}table{border-collapse:collapse;width:100%;font-size:11px;margin-top:12px}th,td{border:1px solid #888;padding:5px;text-align:left}th{background:#eee}</style></head><body><h2>${CFG.name}</h2><div>${CFG.addr} · ${CFG.phone} · ${CFG.email}</div><table><tr>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr>${rs.map(r=>`<tr>${cols.map(c=>`<td>${esc(val(r,c))}</td>`).join('')}</tr>`).join('')}</table></body></html>`;
+  const f=document.createElement('iframe');f.style.cssText='position:fixed;width:0;height:0;border:0';document.body.appendChild(f);
+  f.srcdoc=h;f.onload=()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){download(title+'.html',h,'text/html');toast('Saved as printable HTML – open and print to PDF')}setTimeout(()=>f.remove(),4000)};
+}
+function csv(rs){return '\ufeff'+[cols.map(c=>c[0]),...rs.map(r=>cols.map(c=>val(r,c)))].map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n')}
+
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  if(el.dataset.act==='bd'&&e.target!==el)return;
+  const a=el.dataset.act,id=el.dataset.id,r=S.records.find(x=>x.id===id);
+  if(a==='close'||a==='bd')modal('');
+  else if(a==='loginmenu')modal(`<h3 class="text-xl font-bold mb-4">Choose Login</h3><div class="space-y-3">
+   ${[['admin','shield','Admin Login','Full control panel'],['operator','keyboard','Operator Login','Data entry only'],['public','home','Public / Village Login','Check published records']].map(x=>`<button class="glass glass-sm card p-4 w-full flex items-center gap-4 text-left" data-act="lf" data-role="${x[0]}">${ic(x[1],'w-7 h-7')}<div><div class="font-semibold">${x[2]}</div><div class="text-xs text-white/60">${x[3]}</div></div></button>`).join('')}</div>`);
+  else if(a==='lf')loginForm(el.dataset.role);
+  else if(a==='logout'){S.user=null;S.q='';render()}
+  else if(a==='svc'){const s=SERVICES[el.dataset.i];modal(`<div class="flex items-center gap-3 mb-3"><div class="w-12 h-12 rounded-2xl glass glass-sm grid place-items-center">${ic(s[1],'w-6 h-6')}</div><h3 class="text-xl font-bold">${s[0]}</h3></div>
+   <p class="text-sm text-white/60">Documents required</p><p class="mb-4">${s[3]}</p>
+   <p class="text-sm text-white/70 mb-4">Visit ${CFG.name} or call / WhatsApp ${CFG.phone} to apply.</p>
+   <div class="flex gap-2"><button class="btn flex-1" data-act="close">Close</button></div>`)}
+  else if(a==='savenotice'){await put('settings','notice',{text:$('#notice_in').value.trim()});toast('Notice updated')}
+  else if(a==='optab'){S.opTab=el.dataset.t==='entry'?'entry':+el.dataset.t;render()}
+  else if(a==='folder'){S.folder=el.dataset.i===''?null:+el.dataset.i;render()}
+  else if(a==='adoc'||a==='adl'){const ap=S.apps.find(x=>x.id===id),d=ap&&ap.docs[+el.dataset.k];if(!d)return;toast('Opening…');const u=await loadData(d);
+    if(a==='adoc'&&/image/.test(d.type))modal(`<img src="${u}" class="w-full max-h-[70vh] object-contain rounded-xl"><div class="flex gap-2 mt-4"><button class="btn flex-1" data-act="adl" data-id="${id}" data-k="${el.dataset.k}">${ic('download','w-4 h-4')}Download</button><button class="btn btn-g" data-act="close">Close</button></div>`);
+    else dlData(d.name,u)}
+  else if(a==='delapp'&&confirm('Delete this application and its documents?')){const ap=S.apps.find(x=>x.id===id);if(ap){for(const d of ap.docs)await dropData(d);await del('apps',id)}}
+  else if(a==='tab'){S.tab=el.dataset.t;render()}
+  else if(a==='pub'&&r){await put('records',id,{...r,pub:!r.pub});toast(r.pub?'Hidden from public':'Published to village login')}
+  else if(a==='delrec'&&r&&confirm('Delete this record?')){await dropData(r.pdfc);await del('records',id)}
+  else if(a==='delop'&&confirm('Remove operator?'))await del('operators',id);
+  else if(a==='xls')download('imran-digital-records.csv',csv(filtered()),'text/csv');
+  else if(a==='pdfall')printPdf(filtered(),'IMRAN DIGITAL Records');
+  else if(a==='pdf1'&&r)printPdf([r],'Record '+r.slno);
+  else if(a==='edit'&&r){
+   const f=(k,l,ex='')=>`<div><label class="l">${l}</label><input class="inp" id="e_${k}" value="${esc(r[k])}" ${ex}></div>`;
+   modal(`<h3 class="text-xl font-bold mb-4">Edit Record #${r.slno}</h3><form id="editf" data-id="${r.id}" class="grid grid-cols-2 gap-3">
+   ${f('name','Name')}${f('father','Father / Husband')}${f('aadhaar','Aadhaar No','inputmode="numeric" maxlength="14"')}${f('parcha','Parcha No')}
+   ${f('pan','PAN No','maxlength="10"')}${f('acc','Account No')}${f('ifsc','IFSC Code','maxlength="11"')}
+   <div><label class="l">Replace PDF (${(r.pdf||r.pdfc)?'one attached':'none'})</label><input class="inp" id="e_pdf" type="file" accept="application/pdf"></div>
+   <div class="col-span-2 flex gap-2"><button class="btn flex-1">${ic('save','w-4 h-4')}Save Changes</button><button type="button" class="btn btn-g" data-act="close">Cancel</button></div></form>`);}
+  else if(a==='dlpdf'&&r){toast('Preparing download…');dlData((r.name||'record')+'.pdf',await loadData({data:r.pdf,cid:r.pdfc?.cid,n:r.pdfc?.n}))}
+  else if(a==='fpub'||a==='fdl'||a==='fdel'){const f=S.files.find(x=>x.id===id);if(!f)return;
+    if(a==='fpub'){await put('files',id,{...f,pub:!f.pub});toast(f.pub?'Hidden from public':'File published to village login')}
+    else if(a==='fdl'){toast('Preparing download…');dlData(f.name,await loadData(f))}
+    else if(confirm('Delete this file?')){await dropData(f);await del('files',id)}}
+  else if(a==='view'&&r)modal(`<h3 class="text-xl font-bold mb-4">Record #${r.slno}</h3><div class="grid grid-cols-2 gap-3 text-sm">
+   ${cols.slice(1).map(c=>`<div><div class="text-white/50 text-xs">${c[0]}</div><div>${esc(val(r,c))||'—'}</div></div>`).join('')}</div>
+   <div class="flex gap-2 mt-5">${(r.pdf||r.pdfc)?`<button class="btn" data-act="dlpdf" data-id="${r.id}">${ic('file-down','w-4 h-4')}Attached PDF</button>`:'<span class="text-white/50 text-sm self-center">No PDF attached</span>'}<button class="btn btn-g ml-auto" data-act="close">Close</button></div>`);
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){S.q=e.target.value;render()}
+  if(e.target.id==='f_aadhaar'||e.target.id==='e_aadhaar')e.target.value=fmtA(e.target.value);
+});
+document.addEventListener('submit',async e=>{
+  e.preventDefault();const f=e.target;
+  if(f.id==='lf'){
+    const role=f.dataset.role,a=$('#l_a').value.trim(),b=$('#l_b').value;
+    if(role==='admin'){if(a.toLowerCase()===CFG.admin.email&&b===CFG.admin.pass)S.user={role,name:'Admin'};else return toast('Invalid admin credentials')}
+    else if(role==='operator'){const o=S.ops.find(x=>x.id===a.toLowerCase());if(o&&o.pass===b)S.user={role,name:o.name};else return toast('Invalid operator login')}
+    else{if(b.length<10)return toast('Enter a 10-digit mobile number');S.user={role,name:a};try{const old=S.views.find(v=>v.id===b);put('views',b,{name:a,mobile:b,visits:(old?.visits||0)+1,last:Date.now()}).catch(()=>{})}catch(e){}}
+    S.q='';modal('');render();
+  }
+  if(f.id==='opf'){
+    const id=$('#o_user').value.trim().toLowerCase();
+    if(S.ops.some(o=>o.id===id))return toast('Username already exists');
+    await put('operators',id,{name:$('#o_name').value.trim(),pass:$('#o_pass').value});toast('Operator created');
+  }
+  if(f.id==='appf'){
+    const sv=SERVICES[+f.dataset.svc],labels=DOCS[sv[0]]||['Document 1','Document 2'];
+    const name=$('#a_name').value.trim(),mob=$('#a_mob').value.trim(),note=$('#a_note').value.trim();
+    const files=labels.map((l,k)=>[l,$('#a_d'+k).files[0]]).filter(x=>x[1]);
+    if(!name&&!files.length)return toast('Enter applicant name or attach a document');
+    toast('Uploading…');const docs=[];
+    for(const [label,file] of files){
+      const u=await prep(file);if(!u)return toast(label+' is too large – max '+MAXT());
+      const img=/^image\//.test(file.type),pk=await packData(u,true);
+      docs.push({label,name:img?file.name.replace(/\.[^.]+$/,'')+'.jpg':file.name,type:img?'image/jpeg':(file.type||'application/octet-stream'),...pk});
+    }
+    await put('apps','a'+Date.now(),{svc:sv[0],name,mob,note,docs,by:S.user.name,at:Date.now()});
+    f.reset();toast('Sent to Admin – '+sv[0]+' folder');
+  }
+  if(f.id==='filef'){
+    const file=$('#u_file').files[0];if(!file)return;
+    const data=await prep(file);if(!data)return toast('File too large – max '+MAXT());
+    toast('Uploading…');const pk=/^image\//.test(file.type)?{data}:await packData(data);
+    await put('files','f'+Date.now(),{title:$('#u_title').value.trim(),name:file.name,type:file.type||'application/octet-stream',...pk,pub:false,at:Date.now()});
+    f.reset();toast('File uploaded – switch it on to publish');
+  }
+  if(f.id==='editf'){
+    const r=S.records.find(x=>x.id===f.dataset.id);if(!r)return;
+    const g=k=>$('#e_'+k).value.trim(),aad=g('aadhaar').replace(/\s/g,''),pan=g('pan').toUpperCase(),ifsc=g('ifsc').toUpperCase();
+    if(aad&&aad.length!==12)return toast('Aadhaar must be 12 digits (or leave it empty)');
+    const dupE=aad&&S.records.find(x=>x.id!==r.id&&String(x.aadhaar).replace(/\s/g,'')===aad);
+    if(dupE)return toast('Duplicate! This Aadhaar already exists at SL No '+dupE.slno+' ('+dupE.name+')');
+    if(pan&&!/^[A-Z]{5}\d{4}[A-Z]$/.test(pan))return toast('Invalid PAN format (ABCDE1234F)');
+    if(ifsc&&!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc))return toast('Invalid IFSC code');
+    let np={};const file=$('#e_pdf').files[0];
+    if(file){if(file.size>MAXB())return toast('PDF is too large – max '+MAXT());
+      toast('Uploading…');const pk=await packData(await rd(file));await dropData(r.pdfc);np={pdf:pk.data||'',pdfc:pk.cid?{cid:pk.cid,n:pk.n}:null}}
+    await put('records',r.id,{...r,name:g('name'),father:g('father'),aadhaar:aad?fmtA(aad):'',parcha:g('parcha'),pan,acc:g('acc'),ifsc,...np,edited:Date.now()});
+    modal('');toast('Record updated');
+  }
+  if(f.id==='entry'){
+    const aad=$('#f_aadhaar').value.replace(/\s/g,''),pan=$('#f_pan').value.toUpperCase(),ifsc=$('#f_ifsc').value.toUpperCase();
+    if(aad&&aad.length!==12)return toast('Aadhaar must be 12 digits (or leave it empty)');
+    const dup=aad&&S.records.find(x=>String(x.aadhaar).replace(/\s/g,'')===aad);
+    if(dup)return toast('Duplicate! This Aadhaar is already entered at SL No '+dup.slno+' ('+dup.name+')');
+    if(pan&&!/^[A-Z]{5}\d{4}[A-Z]$/.test(pan))return toast('Invalid PAN format (ABCDE1234F)');
+    if(ifsc&&!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc))return toast('Invalid IFSC code');
+    if(![...f.querySelectorAll('input')].some(i=>i.value.trim()))return toast('Fill at least one field');
+    let pdf='',pdfc=null;const file=$('#f_pdf').files[0];
+    if(file){if(file.size>MAXB())return toast('PDF is too large – max '+MAXT());
+      toast('Uploading…');const pk=await packData(await rd(file));pdf=pk.data||'';pdfc=pk.cid?{cid:pk.cid,n:pk.n}:null}
+    const slno=Math.max(0,...S.records.map(r=>r.slno||0))+1,id='r'+Date.now();
+    await put('records',id,{slno,name:$('#f_name').value.trim(),father:$('#f_father').value.trim(),aadhaar:aad?fmtA(aad):'',parcha:$('#f_parcha').value.trim(),pan,acc:$('#f_acc').value.trim(),ifsc,pdf,...(pdfc?{pdfc}:{}),by:S.user.name,pub:false,at:Date.now()});
+    f.reset();toast('Saved – sent to Admin dashboard (SL '+slno+')');
+  }
+});
+render();initStore();
+</script>
+</body>
+</html>
